@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RouteService.FlightsServiceClient\RouteService.FlightsServiceClient.csproj" />
+    <ProjectReference Include="..\RouteService.FlightsServiceProvider\RouteService.FlightsServiceProvider.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService", "RouteService\RouteService.csproj", "{35CE2BFF-501C-44A9-AD88-C64784961F5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.Api", "RouteService\RouteService.Api.csproj", "{35CE2BFF-501C-44A9-AD88-C64784961F5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.FlightsServiceClient", "RouteService.FlightsServiceClient\RouteService.FlightsServiceClient.csproj", "{97A6A93C-8B14-4DE4-ADA1-4F818EDF6D4C}"
 EndProject
