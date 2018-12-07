@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RouteService.Api</name>
+    </assembly>
+    <members>
+        <member name="M:RouteService.Controllers.RouteController.Get(System.String,System.String)">
+            <summary>
+            Searches for a route from the sourceAirport to the destinationAirport.
+            </summary>
+            <param name="sourceAirport">The name or the code of the source airport.</param>
+            <param name="destinationAirport">The name or the code of the destination airport.</param>
+            <returns>The route.</returns>
+        </member>
+    </members>
+</doc>

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.Model", "Route
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.FlightsServiceProvider", "RouteService.FlightsServiceProvider\RouteService.FlightsServiceProvider.csproj", "{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Logic", "RouteService.Logic\RouteService.Logic.csproj", "{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
