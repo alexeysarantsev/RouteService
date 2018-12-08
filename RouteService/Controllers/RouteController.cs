@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RouteService.Logic;
 using RouteService.Model;
 using RouteService.Model.Interfaces;
 using System;
@@ -26,7 +27,7 @@ namespace RouteService.Controllers
         /// <param name="destinationAirport">The name or the code of the destination airport.</param>
         /// <returns>The route.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(Route), 200)]
+        [ProducesResponseType(typeof(Journey), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 500)]
@@ -36,8 +37,18 @@ namespace RouteService.Controllers
         /// <response code="500">Unhandled server error.</response>
         public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport)
         {
-            await _airportProvider.Get(sourceAirport);
-            return Ok();
+            var sourceAirportInfo = await _airportProvider.Get(sourceAirport);
+            if (sourceAirportInfo == null)
+                return BadRequest($"Airport {sourceAirport} not found");
+            var destinationAirportInfo = await _airportProvider.Get(destinationAirport);
+            if (destinationAirportInfo == null)
+                return BadRequest($"Airport {destinationAirportInfo} not found");
+
+            JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirportInfo.Alias, destinationAirportInfo.Alias);
+            var routes = await rb.Build();
+            if (routes == null)
+                return NotFound();
+            return Ok(routes);
         }
     }
 }

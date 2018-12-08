@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RouteService.FlightsServiceClient\RouteService.FlightsServiceClient.csproj" />
     <ProjectReference Include="..\RouteService.FlightsServiceProvider\RouteService.FlightsServiceProvider.csproj" />
+    <ProjectReference Include="..\RouteService.Logic\RouteService.Logic.csproj" />
   </ItemGroup>
 
 </Project>

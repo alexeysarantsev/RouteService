@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.FlightsService
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.Model", "RouteService.Model\RouteService.Model.csproj", "{D16286CD-4EA6-4C47-A9A6-A1EFBD5B4EEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.FlightsServiceProvider", "RouteService.FlightsServiceProvider\RouteService.FlightsServiceProvider.csproj", "{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.FlightsServiceProvider", "RouteService.FlightsServiceProvider\RouteService.FlightsServiceProvider.csproj", "{9F54769B-9E56-426B-9ADB-01D06D1BE5E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Logic", "RouteService.Logic\RouteService.Logic.csproj", "{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RouteService.Logic", "RouteService.Logic\RouteService.Logic.csproj", "{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Logic.Tests", "RouteService.Logic.Tests\RouteService.Logic.Tests.csproj", "{CBF53DAA-EAB5-4FE6-BE65-9403FD91A2F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EE761F8-1C8A-4D5A-AC4F-A209E7D5827F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF53DAA-EAB5-4FE6-BE65-9403FD91A2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF53DAA-EAB5-4FE6-BE65-9403FD91A2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF53DAA-EAB5-4FE6-BE65-9403FD91A2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF53DAA-EAB5-4FE6-BE65-9403FD91A2F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
