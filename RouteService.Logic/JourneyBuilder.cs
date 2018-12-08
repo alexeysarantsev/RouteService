@@ -20,8 +20,7 @@ namespace RouteService.Logic
         private readonly CancellationToken _cancellationToken;
 
         private ConcurrentDictionary<string, object> _processedAirports = new ConcurrentDictionary<string, object>();
-        private ConcurrentDictionary<string, bool> _activeAirlines = new ConcurrentDictionary<string, bool>();
-        private ConcurrentDictionary<string, Task<Airline>> _activeAirlines2 = new ConcurrentDictionary<string, Task<Airline>>();
+        private ConcurrentDictionary<string, Task<Airline>> _activeAirlines = new ConcurrentDictionary<string, Task<Airline>>();
 
         private bool _found = false;
 
@@ -75,7 +74,7 @@ namespace RouteService.Logic
 
             ConcurrentBag<FlightsServiceClient.Models.Route> activeAirports = new ConcurrentBag<FlightsServiceClient.Models.Route>();
             var activeAirportTasks = notProcessedAirports.Select(async npa => {
-                if (await IsAirlineActive2(npa.Airline))
+                if (await IsAirlineActive(npa.Airline))
                     activeAirports.Add(npa);
             });
             await Task.WhenAll(activeAirportTasks);
@@ -102,19 +101,7 @@ namespace RouteService.Logic
 
         private async Task<bool> IsAirlineActive(string airlineCode)
         {
-            if (!_activeAirlines.ContainsKey(airlineCode))
-            {
-                var airline = await _airlineProvider.Get(airlineCode);
-                bool isActive = airline.Active == true;
-                _activeAirlines[airlineCode] = isActive;
-                return isActive;
-            }
-            return _activeAirlines[airlineCode];
-        }
-
-        private async Task<bool> IsAirlineActive2(string airlineCode)
-        {
-            var task = _activeAirlines2.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac); });
+            var task = _activeAirlines.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac); });
             var airline = await task;
             return airline.Active == true;
         }
@@ -140,7 +127,6 @@ namespace RouteService.Logic
             return routes;
         }
     }
-
 
     public class RoutePoint
     {
