@@ -15,8 +15,8 @@ namespace RouteService.Logic
         private readonly IAirlineProvider _airlineProvider;
         private readonly IAirportProvider _airportProvider;
         private readonly IRouteProvider _routeProvider;
-        private readonly string _sourceAirport;
-        private readonly string _destinationAirport;
+        private readonly string _sourceAirportAlias;
+        private readonly string _destinationAirportAlias;
         private readonly CancellationToken _cancellationToken;
 
         private ConcurrentDictionary<string, object> _processedAirports = new ConcurrentDictionary<string, object>();
@@ -26,45 +26,36 @@ namespace RouteService.Logic
         private bool _found = false;
 
         public JourneyBuilder(IAirlineProvider airlineProvider, IAirportProvider airportProvider, IRouteProvider routeProvider,
-            string sourceAirport, string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
+            string sourceAirportAlias, string destinationAirportAlias, CancellationToken cancellationToken = default(CancellationToken))
         {
             _airlineProvider = airlineProvider ?? throw new ArgumentNullException(nameof(airlineProvider));
             _airportProvider = airportProvider ?? throw new ArgumentNullException(nameof(airportProvider));
             _routeProvider = routeProvider ?? throw new ArgumentNullException(nameof(routeProvider));
-            _sourceAirport = sourceAirport;
-            _destinationAirport = destinationAirport;
+            _sourceAirportAlias = sourceAirportAlias ?? throw new ArgumentNullException(nameof(sourceAirportAlias)); 
+            _destinationAirportAlias = destinationAirportAlias ?? throw new ArgumentNullException(nameof(destinationAirportAlias));
+            _cancellationToken = cancellationToken;
         }
 
         public async Task<Journey> Build()
         {
-            if (_sourceAirport == _destinationAirport)
+            if (string.Equals(_sourceAirportAlias, _destinationAirportAlias, StringComparison.InvariantCultureIgnoreCase))
                 return new Journey { Routes = new Route[] { } };
 
-            if (await _airportProvider.Get(_sourceAirport) == null)
-                throw new AirportNotFoundException($"Airport {_sourceAirport} not found.");
-            if (await _airportProvider.Get(_destinationAirport) == null)
-                throw new AirportNotFoundException($"Airport {_destinationAirport} not found.");
+            var sourceAirport = await _airportProvider.Get(_sourceAirportAlias);
+            if (sourceAirport == null)
+                throw new AirportNotFoundException($"Airport {_sourceAirportAlias} not found.");
+            var destinationAirport = await _airportProvider.Get(_destinationAirportAlias);
+            if (destinationAirport == null)
+                throw new AirportNotFoundException($"Airport {_destinationAirportAlias} not found.");
 
             List<Route> routes = new List<Route>();
-            var currentPoint = new RoutePoint { Airport = _sourceAirport };
+            var currentPoint = new RoutePoint { Airport = sourceAirport.Alias };
 
-            var routePoint = await FindRoute(currentPoint, _destinationAirport);
+            var routePoint = await FindRoute(currentPoint, destinationAirport.Alias);
             if (routePoint == null)
                 return null;
-            var stack = new Stack<RoutePoint>();
-            var current = routePoint;
-            while (current != null)
-            {
-                stack.Push(current);
-                current = current.Previous;
-            }
-            while (stack.Any())
-            {
-                var currentRouteOint = stack.Pop();
-                if (currentRouteOint.Route != null)
-                    routes.Add(currentRouteOint.Route);
-            }
-            return new Journey { Routes = routes.ToArray() };
+            
+            return new Journey { Routes = ConvertRoutePointToRouts(routePoint) };
         }
 
         private async Task<RoutePoint> FindRoute(RoutePoint currentPoint, string destinationAirport)
@@ -126,6 +117,27 @@ namespace RouteService.Logic
             var task = _activeAirlines2.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac); });
             var airline = await task;
             return airline.Active == true;
+        }
+
+        private Route[] ConvertRoutePointToRouts(RoutePoint routePoint)
+        {
+            int numberOfPoints = 0;
+            RoutePoint current = routePoint;
+            while (current != null && current.Route != null)
+            {
+                numberOfPoints++;
+                current = current.Previous;
+            }
+            current = routePoint;
+            Route[] routes = new Route[numberOfPoints];
+            int i = numberOfPoints - 1;
+            while (current != null && current.Route != null)
+            {
+                routes[i] = current.Route;
+                current = current.Previous;
+                i--;
+            }
+            return routes;
         }
     }
 
