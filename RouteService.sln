@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.API.Tests", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Cache", "RouteService.Cache\RouteService.Cache.csproj", "{73A17F2B-2906-4BAA-8BEC-241841DD8607}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Cache.Tests", "RouteService.Cache.Tests\RouteService.Cache.Tests.csproj", "{224F05D6-1FD4-4AAE-A279-CD008B8E0EDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{224F05D6-1FD4-4AAE-A279-CD008B8E0EDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{224F05D6-1FD4-4AAE-A279-CD008B8E0EDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{224F05D6-1FD4-4AAE-A279-CD008B8E0EDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{224F05D6-1FD4-4AAE-A279-CD008B8E0EDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
