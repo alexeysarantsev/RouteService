@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RouteService.Cache\RouteService.Cache.csproj" />
     <ProjectReference Include="..\RouteService.Model\RouteService.Model.csproj" />
   </ItemGroup>
 

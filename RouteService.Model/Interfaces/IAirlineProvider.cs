@@ -4,8 +4,7 @@ using System.Threading.Tasks;
     
 namespace RouteService.Model.Interfaces
 {
-    public interface IAirlineProvider
+    public interface IAirlineProvider : IGetByAlias<Airline>
     {
-        Task<Airline> Get(string alias);
     }
 }

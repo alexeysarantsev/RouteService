@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 
 namespace RouteService.Model.Interfaces
 {
-    public interface IRouteProvider
+    public interface IRouteProvider : IGetByAlias<IList<Models.Route>>
     {
-        Task<IList<Models.Route>> Get(string srcAirportCode);
     }
 }

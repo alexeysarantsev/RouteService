@@ -18,6 +18,8 @@ namespace RouteService
     public class Startup
     {
         private const string flightsServiceUrlKey = "FlightsServiceUrl";
+        private const string flightServiceCasheLifetimeKey = "FlightServiceCasheLifetime";
+        
 
         public Startup(IHostingEnvironment env)
         {
@@ -35,16 +37,23 @@ namespace RouteService
         public void ConfigureServices(IServiceCollection services)
         {
             string flightsServiceUrl = Configuration[flightsServiceUrlKey];
+            int flightServiceCasheLifetime = int.Parse(Configuration[flightServiceCasheLifetimeKey]);
+            TimeSpan flightServiceTtl = TimeSpan.FromMinutes(flightServiceCasheLifetime);
+
             var flightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
 
             var airlineProvider = new AirlineProvider(flightsservice);
             var routeProvider = new RouteProvider(flightsservice);
             var airportProvider = new AirportProvider(flightsservice);
 
+            var airlineProviderCached = new AirlineProviderCached(flightServiceTtl, airlineProvider);
+            var airportProviderCached = new AirportProviderCached(flightServiceTtl, airportProvider);
+            var routeProviderCached = new RouteProviderCached(flightServiceTtl, routeProvider);
+
             //TODO: check lifecycle 
-            services.AddSingleton<IAirlineProvider>(airlineProvider);
-            services.AddSingleton<IRouteProvider>(routeProvider);
-            services.AddSingleton<IAirportProvider>(airportProvider);
+            services.AddSingleton<IAirlineProvider>(airlineProviderCached);
+            services.AddSingleton<IRouteProvider>(routeProviderCached);
+            services.AddSingleton<IAirportProvider>(airportProviderCached);
 
             services
                .AddMvc(options =>

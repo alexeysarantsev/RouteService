@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Logic.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.API.Tests", "RouteService.API.Tests\RouteService.API.Tests.csproj", "{FE32DC89-0053-4DA0-AACE-19EC1572F9D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteService.Cache", "RouteService.Cache\RouteService.Cache.csproj", "{73A17F2B-2906-4BAA-8BEC-241841DD8607}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FE32DC89-0053-4DA0-AACE-19EC1572F9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE32DC89-0053-4DA0-AACE-19EC1572F9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE32DC89-0053-4DA0-AACE-19EC1572F9D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73A17F2B-2906-4BAA-8BEC-241841DD8607}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
