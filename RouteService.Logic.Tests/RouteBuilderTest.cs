@@ -154,6 +154,17 @@ namespace RouteService.Logic.Tests
             Assert.IsNull(journey);
         }
 
+        [Test]
+        [TestCase("SVO", "SVO")]
+        [TestCase("SVO", "KGD")]
+        public void OperationCancelledExceptionTest(string src, string dest)
+        {
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            JourneyBuilder journeyBuilder = new JourneyBuilder(_airlineStub.Object, _airportStub.Object, _routeStub.Object, src, dest, cancellationTokenSource.Token);
+            cancellationTokenSource.Cancel();
+            Assert.ThrowsAsync<TaskCanceledException>(async () => { await journeyBuilder.Build(); });
+        }
+
         private bool IsAirlineActive(string airline)
         {
             var found = _airlines.Where(a => a.Alias == airline).FirstOrDefault();
