@@ -59,6 +59,7 @@ namespace RouteService
                .AddMvc(options =>
                {
                    options.Filters.Add<OperationCancelledExceptionFilter>();
+                   options.Filters.Add(new ThrottleFilter() {Milliseconds = 200 });
                })
                .AddJsonOptions(options =>
                {
