@@ -2,8 +2,8 @@
 using RouteService.FlightsServiceClient.Models;
 using RouteService.Model.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RouteService.FlightsServiceProvider
@@ -16,9 +16,11 @@ namespace RouteService.FlightsServiceProvider
         {
             _flightsservice = flightsservice ?? throw new ArgumentNullException(nameof(flightsservice));
         }
-        public async Task<Airline> Get(string code)
+        public async Task<Airline> Get(string alias, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return (await _flightsservice.ApiAirlineByAliasGetAsync(code)).Where(a => a.Alias == code).FirstOrDefault();
+            System.Diagnostics.Debug.WriteLine($"AirlineProvider: {alias}");
+            return (await _flightsservice.ApiAirlineByAliasGetAsync(alias, cancellationToken)).Where(a => a.Alias == alias).FirstOrDefault();
         }
     }
 }
+;

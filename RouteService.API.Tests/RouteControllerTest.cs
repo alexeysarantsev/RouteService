@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -60,22 +61,21 @@ namespace RouteService.API.Tests
             _airlineStub = new Mock<IAirlineProvider>();
             _routeStub = new Mock<IRouteProvider>();
 
-            _airportStub.Setup(a => a.Get(It.IsAny<string>())).ReturnsAsync((string airport) =>
+            _airportStub.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string airport, CancellationToken canellationToken) =>
             {
                 return _airports.Where(a => a.Alias == airport).FirstOrDefault();
             });
 
-            _airlineStub.Setup(a => a.Get(It.IsAny<string>())).ReturnsAsync((string airline) =>
+            _airlineStub.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string airline, CancellationToken canellationToken) =>
             {
                 return _airlines.Where(a => a.Alias == airline).FirstOrDefault();
             });
 
-            _routeStub.Setup(a => a.Get(It.IsAny<string>())).ReturnsAsync((string srcAirportCode) =>
+            _routeStub.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string srcAirportCode, CancellationToken canellationToken) =>
             {
                 return _routes.Where(a => a.SrcAirport == srcAirportCode).ToList();
             });
         }
-        
 
         [Test]
         public async Task EmptySourceNotFoundTest()

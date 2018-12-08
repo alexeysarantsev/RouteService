@@ -3,6 +3,7 @@ using RouteService.Logic;
 using RouteService.Model;
 using RouteService.Model.Interfaces;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RouteService.Controllers
@@ -35,20 +36,30 @@ namespace RouteService.Controllers
         /// <response code="400">The source of destination airport is not set or not found.</response>
         /// <response code="404">The route is not found.</response>
         /// <response code="500">Unhandled server error.</response>
-        public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport)
+        public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var sourceAirportInfo = await _airportProvider.Get(sourceAirport);
-            if (sourceAirportInfo == null)
-                return BadRequest($"Airport {sourceAirport} not found");
-            var destinationAirportInfo = await _airportProvider.Get(destinationAirport);
-            if (destinationAirportInfo == null)
-                return BadRequest($"Airport {destinationAirportInfo} not found");
-
-            JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirportInfo.Alias, destinationAirportInfo.Alias);
-            var routes = await rb.Build();
-            if (routes == null)
-                return NotFound();
-            return Ok(routes);
+            //var sourceAirportInfo = await _airportProvider.Get(sourceAirport);
+            //if (sourceAirportInfo == null)
+            //    return BadRequest($"Airport {sourceAirport} not found");
+            //var destinationAirportInfo = await _airportProvider.Get(destinationAirport);
+            //if (destinationAirportInfo == null)
+            //    return BadRequest($"Airport {destinationAirportInfo} not found");
+            try
+            {
+                JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirport, destinationAirport, cancellationToken);
+                var routes = await rb.Build();
+                if (routes == null)
+                    return NotFound();
+                return Ok(routes);
+            }
+            catch (AirportNotFoundException exc)
+            {
+                return BadRequest(exc.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

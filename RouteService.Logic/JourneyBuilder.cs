@@ -17,6 +17,7 @@ namespace RouteService.Logic
         private readonly IRouteProvider _routeProvider;
         private readonly string _sourceAirport;
         private readonly string _destinationAirport;
+        private readonly CancellationToken _cancellationToken;
 
         private ConcurrentDictionary<string, object> _processedAirports = new ConcurrentDictionary<string, object>();
         private ConcurrentDictionary<string, bool> _activeAirlines = new ConcurrentDictionary<string, bool>();
@@ -25,7 +26,7 @@ namespace RouteService.Logic
         private bool _found = false;
 
         public JourneyBuilder(IAirlineProvider airlineProvider, IAirportProvider airportProvider, IRouteProvider routeProvider,
-            string sourceAirport, string destinationAirport)
+            string sourceAirport, string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
             _airlineProvider = airlineProvider ?? throw new ArgumentNullException(nameof(airlineProvider));
             _airportProvider = airportProvider ?? throw new ArgumentNullException(nameof(airportProvider));
@@ -69,6 +70,8 @@ namespace RouteService.Logic
         private async Task<RoutePoint> FindRoute(RoutePoint currentPoint, string destinationAirport)
         {
             if (_found)
+                return null;
+            if (_cancellationToken!= null && _cancellationToken.IsCancellationRequested)
                 return null;
             //lets skip it if it has been processed already
             if (_processedAirports.GetOrAdd(currentPoint.Airport, currentPoint) != currentPoint)
@@ -125,7 +128,7 @@ namespace RouteService.Logic
             return airline.Active == true;
         }
     }
-    
+
 
     public class RoutePoint
     {
