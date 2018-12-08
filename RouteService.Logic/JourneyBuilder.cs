@@ -40,10 +40,10 @@ namespace RouteService.Logic
             if (string.Equals(_sourceAirportAlias, _destinationAirportAlias, StringComparison.InvariantCultureIgnoreCase))
                 return new Journey { Routes = new Route[] { } };
 
-            var sourceAirport = await _airportProvider.Get(_sourceAirportAlias);
+            var sourceAirport = await _airportProvider.Get(_sourceAirportAlias, _cancellationToken);
             if (sourceAirport == null)
                 throw new AirportNotFoundException($"Airport {_sourceAirportAlias} not found.");
-            var destinationAirport = await _airportProvider.Get(_destinationAirportAlias);
+            var destinationAirport = await _airportProvider.Get(_destinationAirportAlias, _cancellationToken);
             if (destinationAirport == null)
                 throw new AirportNotFoundException($"Airport {_destinationAirportAlias} not found.");
 
@@ -67,7 +67,7 @@ namespace RouteService.Logic
             if (_processedAirports.GetOrAdd(currentPoint.Airport, currentPoint) != currentPoint)
                 return null;
 
-            var accessibleAirports = await _routeProvider.Get(currentPoint.Airport);
+            var accessibleAirports = await _routeProvider.Get(currentPoint.Airport, _cancellationToken);
 
             // filter out already processed points
             var notProcessedAirports = accessibleAirports.Where(aa => !_processedAirports.ContainsKey(aa.DestAirport));
@@ -89,8 +89,8 @@ namespace RouteService.Logic
             else
             {
                 var tasks = activeAirports.Select(async npa =>  {
-                    var routePoint1 = new RoutePoint() { Airport = npa.DestAirport, Route = npa, Previous = currentPoint };
-                    var foundRoute =  await FindRoute(routePoint1, destinationAirport);
+                    var activeAirportRoutePoint = new RoutePoint() { Airport = npa.DestAirport, Route = npa, Previous = currentPoint };
+                    var foundRoute =  await FindRoute(activeAirportRoutePoint, destinationAirport);
                     if (foundRoute != null && routePoint == null)
                         routePoint = foundRoute;
                 });
@@ -101,7 +101,7 @@ namespace RouteService.Logic
 
         private async Task<bool> IsAirlineActive(string airlineCode)
         {
-            var task = _activeAirlines.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac); });
+            var task = _activeAirlines.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac, _cancellationToken); });
             var airline = await task;
             return airline.Active == true;
         }
