@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using RouteService.Api.Filters;
 using RouteService.FlightsServiceProvider;
 using RouteService.Model.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
@@ -50,7 +51,6 @@ namespace RouteService
             var airportProviderCached = new AirportProviderCached(flightServiceTtl, airportProvider);
             var routeProviderCached = new RouteProviderCached(flightServiceTtl, routeProvider);
 
-            //TODO: check lifecycle 
             services.AddSingleton<IAirlineProvider>(airlineProviderCached);
             services.AddSingleton<IRouteProvider>(routeProviderCached);
             services.AddSingleton<IAirportProvider>(airportProviderCached);
@@ -58,8 +58,8 @@ namespace RouteService
             services
                .AddMvc(options =>
                {
-                    //options.Conventions.Add(new CommaSeparatedQueryStringConvention());
-                })
+                   options.Filters.Add<OperationCancelledExceptionFilter>();
+               })
                .AddJsonOptions(options =>
                {
                    options.SerializerSettings.Formatting = Formatting.Indented;

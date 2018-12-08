@@ -38,12 +38,6 @@ namespace RouteService.Controllers
         /// <response code="500">Unhandled server error.</response>
         public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
-            //var sourceAirportInfo = await _airportProvider.Get(sourceAirport);
-            //if (sourceAirportInfo == null)
-            //    return BadRequest($"Airport {sourceAirport} not found");
-            //var destinationAirportInfo = await _airportProvider.Get(destinationAirport);
-            //if (destinationAirportInfo == null)
-            //    return BadRequest($"Airport {destinationAirportInfo} not found");
             try
             {
                 JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirport, destinationAirport, cancellationToken);
@@ -55,10 +49,6 @@ namespace RouteService.Controllers
             catch (AirportNotFoundException exc)
             {
                 return BadRequest(exc.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
             }
         }
     }

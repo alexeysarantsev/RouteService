@@ -37,12 +37,14 @@ namespace RouteService.Logic
 
         public async Task<Journey> Build()
         {
+            _cancellationToken.ThrowIfCancellationRequested();
             if (string.Equals(_sourceAirportAlias, _destinationAirportAlias, StringComparison.InvariantCultureIgnoreCase))
                 return new Journey { Routes = new Route[] { } };
 
             var sourceAirport = await _airportProvider.Get(_sourceAirportAlias, _cancellationToken);
             if (sourceAirport == null)
                 throw new AirportNotFoundException($"Airport {_sourceAirportAlias} not found.");
+            _cancellationToken.ThrowIfCancellationRequested();
             var destinationAirport = await _airportProvider.Get(_destinationAirportAlias, _cancellationToken);
             if (destinationAirport == null)
                 throw new AirportNotFoundException($"Airport {_destinationAirportAlias} not found.");
@@ -61,8 +63,7 @@ namespace RouteService.Logic
         {
             if (_found)
                 return null;
-            if (_cancellationToken!= null && _cancellationToken.IsCancellationRequested)
-                return null;
+            _cancellationToken.ThrowIfCancellationRequested();
             //lets skip it if it has been processed already
             if (_processedAirports.GetOrAdd(currentPoint.Airport, currentPoint) != currentPoint)
                 return null;
@@ -78,8 +79,8 @@ namespace RouteService.Logic
                     activeAirports.Add(npa);
             });
             await Task.WhenAll(activeAirportTasks);
+            _cancellationToken.ThrowIfCancellationRequested();
             RoutePoint routePoint = null;
-
             var route = activeAirports.Where(npa => npa.DestAirport == destinationAirport).FirstOrDefault();
             if (route != null)
             {
