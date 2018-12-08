@@ -20,7 +20,7 @@ namespace RouteService.FlightsServiceProvider
         public async Task<Airport> Get(string alias, CancellationToken cancellationToken = default(CancellationToken))
         {
             System.Diagnostics.Debug.WriteLine($"AirportProvider: {alias}");
-            return (await _flightsservice.ApiAirportSearchGetAsync(alias, cancellationToken)).Where(a => a.Alias == alias).FirstOrDefault();
+            return (await _flightsservice.ApiAirportSearchGetAsync(alias, cancellationToken)).Where(a => String.Equals(a.Alias, alias, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
         }
     }
 }

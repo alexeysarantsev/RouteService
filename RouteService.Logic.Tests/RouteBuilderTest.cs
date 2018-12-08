@@ -82,7 +82,7 @@ namespace RouteService.Logic.Tests
 
             _airportStub.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string airport, CancellationToken canellationToken) =>
             {
-                return _airports.Where(a => a.Alias == airport).FirstOrDefault();
+                return _airports.Where(a => string.Equals(a.Alias, airport, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             });
 
             _airlineStub.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((string airline, CancellationToken canellationToken) =>
@@ -126,6 +126,16 @@ namespace RouteService.Logic.Tests
             JourneyBuilder journeyBuilder = new JourneyBuilder(_airlineStub.Object, _airportStub.Object, _routeStub.Object, src, dest);
             var journey = await journeyBuilder.Build();
             VerifyRoute(src, dest, journey);
+        }
+
+        [Test]
+        [TestCase("bax", "kzn")]
+        [TestCase("bax", "Bax")]
+        public async Task CaseSensivityTest(string src, string dest)
+        {
+            JourneyBuilder journeyBuilder = new JourneyBuilder(_airlineStub.Object, _airportStub.Object, _routeStub.Object, src, dest);
+            var journey = await journeyBuilder.Build();
+            Assert.IsNotNull(journey);
         }
 
         [Test]
