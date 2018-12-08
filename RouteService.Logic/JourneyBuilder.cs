@@ -19,6 +19,9 @@ namespace RouteService.Logic
         private readonly string _destinationAirport;
 
         private ConcurrentDictionary<string, object> _processedAirports = new ConcurrentDictionary<string, object>();
+        private ConcurrentDictionary<string, bool> _activeAirlines = new ConcurrentDictionary<string, bool>();
+        private ConcurrentDictionary<string, Task<Airline>> _activeAirlines2 = new ConcurrentDictionary<string, Task<Airline>>();
+
         private bool _found = false;
 
         public JourneyBuilder(IAirlineProvider airlineProvider, IAirportProvider airportProvider, IRouteProvider routeProvider,
@@ -40,7 +43,6 @@ namespace RouteService.Logic
                 throw new AirportNotFoundException($"Airport {_sourceAirport} not found.");
             if (await _airportProvider.Get(_destinationAirport) == null)
                 throw new AirportNotFoundException($"Airport {_destinationAirport} not found.");
-
 
             List<Route> routes = new List<Route>();
             var currentPoint = new RoutePoint { Airport = _sourceAirport };
@@ -79,7 +81,7 @@ namespace RouteService.Logic
 
             ConcurrentBag<FlightsServiceClient.Models.Route> activeAirports = new ConcurrentBag<FlightsServiceClient.Models.Route>();
             var activeAirportTasks = notProcessedAirports.Select(async npa => {
-                if ((await _airlineProvider.Get(npa.Airline)).Active == true)
+                if (await IsAirlineActive2(npa.Airline))
                     activeAirports.Add(npa);
             });
             await Task.WhenAll(activeAirportTasks);
@@ -102,6 +104,25 @@ namespace RouteService.Logic
                 await Task.WhenAll(tasks);
             }
             return routePoint;
+        }
+
+        private async Task<bool> IsAirlineActive(string airlineCode)
+        {
+            if (!_activeAirlines.ContainsKey(airlineCode))
+            {
+                var airline = await _airlineProvider.Get(airlineCode);
+                bool isActive = airline.Active == true;
+                _activeAirlines[airlineCode] = isActive;
+                return isActive;
+            }
+            return _activeAirlines[airlineCode];
+        }
+
+        private async Task<bool> IsAirlineActive2(string airlineCode)
+        {
+            var task = _activeAirlines2.GetOrAdd(airlineCode,  (ac) => { return _airlineProvider.Get(ac); });
+            var airline = await task;
+            return airline.Active == true;
         }
     }
     
