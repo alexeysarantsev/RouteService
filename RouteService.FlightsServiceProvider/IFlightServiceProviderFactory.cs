@@ -1,15 +1,9 @@
-﻿using RouteService.Model.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace RouteService.FlightsServiceProvider
 {
-    public interface IFlightServiceProvider
+    public interface IFlightServiceProviderFactory<TProvider>
     {
-        IAirlineProvider GetAirlineProvider();
-        IAirportProvider GetAirportProvider();
-        IRouteProvider GetRouteProvider();
-
+        TProvider Get(FlightsServiceClient.IFlightsservice flightsservice);
     }
 }

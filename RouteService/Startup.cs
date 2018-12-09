@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,26 +46,9 @@ namespace RouteService
 
             var myflightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
 
-            //var airlineProvider = new AirlineProvider(flightsservice);
-            //var routeProvider = new RouteProvider(flightsservice);
-            //var airportProvider = new AirportProvider(flightsservice);
-
-            //var airlineProviderCached = new AirlineProviderCached(flightServiceTtl, airlineProvider);
-            //var airportProviderCached = new AirportProviderCached(flightServiceTtl, airportProvider);
-            //var routeProviderCached = new RouteProviderCached(flightServiceTtl, routeProvider);
-
-            //services.AddSingleton<IAirlineProvider>(airlineProviderCached);
-            //services.AddSingleton<IRouteProvider>(routeProviderCached);
-            //services.AddSingleton<IAirportProvider>(airportProviderCached);
-
-            // actually does not work because there is no appropriate ctor to resolve the interface 
             services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>()
-                        .SetHandlerLifetime(TimeSpan.FromMinutes(1))  //Set lifetime to five minutes
+                        .SetHandlerLifetime(TimeSpan.FromMinutes(2))  //Set lifetime to five minutes
                         .AddPolicyHandler(GetRetryPolicy());
-
-
-            //IAirlineProviderFactory airlineProviderFactory = new AirlineProviderFactory(flightServiceTtl);
-            //services.AddSingleton<IAirlineProviderFactory>(airlineProviderFactory);
 
             services.AddSingleton<IAirlineProviderFactory>(p => { return new AirlineProviderFactory(flightServiceTtl); });
             services.AddSingleton<IAirportProviderFactory>( p => { return new AirportProviderFactory(flightServiceTtl);});
@@ -84,7 +66,6 @@ namespace RouteService
             services.AddScoped<IAirlineProvider>(p =>
             {
                 var factory = p.GetRequiredService<IAirlineProviderFactory>();
-                //var flightService = myflightsservice;
                 var flightService =  p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
@@ -92,7 +73,6 @@ namespace RouteService
             services.AddScoped<IAirportProvider>(p =>
             {
                 var factory = p.GetRequiredService<IAirportProviderFactory>();
-                //var flightService = myflightsservice; 
                 var flightService = p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
@@ -100,7 +80,6 @@ namespace RouteService
             services.AddScoped<IRouteProvider>(p =>
             {
                 var factory = p.GetRequiredService<IRouteProviderFactory>();
-                //var flightService = myflightsservice; 
                 var flightService = p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
