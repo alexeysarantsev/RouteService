@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Extensions.Http;
 using RouteService.Api.Filters;
 using RouteService.FlightsServiceProvider;
 using RouteService.Model.Interfaces;
@@ -58,7 +60,9 @@ namespace RouteService
             //services.AddSingleton<IAirportProvider>(airportProviderCached);
 
             // actually does not work because there is no appropriate ctor to resolve the interface 
-            services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>();
+            services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>()
+                        .SetHandlerLifetime(TimeSpan.FromMinutes(1))  //Set lifetime to five minutes
+                        .AddPolicyHandler(GetRetryPolicy());
 
 
             //IAirlineProviderFactory airlineProviderFactory = new AirlineProviderFactory(flightServiceTtl);
@@ -80,21 +84,24 @@ namespace RouteService
             services.AddScoped<IAirlineProvider>(p =>
             {
                 var factory = p.GetRequiredService<IAirlineProviderFactory>();
-                var flightService = myflightsservice;// p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                //var flightService = myflightsservice;
+                var flightService =  p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
 
             services.AddScoped<IAirportProvider>(p =>
             {
                 var factory = p.GetRequiredService<IAirportProviderFactory>();
-                var flightService = myflightsservice; //p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                //var flightService = myflightsservice; 
+                var flightService = p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
 
             services.AddScoped<IRouteProvider>(p =>
             {
                 var factory = p.GetRequiredService<IRouteProviderFactory>();
-                var flightService = myflightsservice; //p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                //var flightService = myflightsservice; 
+                var flightService = p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
                 return factory.Get(flightService);
             });
 
@@ -149,6 +156,15 @@ namespace RouteService
 
             app.UseCors(_ => _.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials());
             app.UseMvc();
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                                                                            retryAttempt)));
         }
     }
 }

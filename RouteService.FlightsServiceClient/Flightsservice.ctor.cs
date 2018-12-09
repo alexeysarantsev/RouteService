@@ -6,7 +6,7 @@ namespace RouteService.FlightsServiceClient
     public partial class Flightsservice
     {
         public Flightsservice(Uri baseUri, HttpClient httpClient)
-            : base(httpClient, disposeHttpClient: true)
+            : this(httpClient, disposeHttpClient: true)
         {
             BaseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
         }
