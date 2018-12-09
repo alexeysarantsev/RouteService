@@ -16,6 +16,12 @@ namespace RouteService.FlightsServiceProvider
             _factory = factory;
         }
 
+        public GetByCodeCached(Cache.MemoryCache<string, TValue> cache, Func<string, CancellationToken, Task<TValue>> factory)
+        {
+            _cache = cache;
+            _factory = factory;
+        }
+
         public Task<TValue> Get(string alias, CancellationToken cancellationToken)
         {
             return _cache.GetOrCreateAsync(alias, (key) => { return _factory(key, cancellationToken); });

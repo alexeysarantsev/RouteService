@@ -10,5 +10,10 @@ namespace RouteService.FlightsServiceProvider
             : base(ttl, (alias, cancellationToken) => { return airportProvider.Get(alias, cancellationToken); })
         {
         }
+
+        public AirportProviderCached(Cache.MemoryCache<string, Airport> cache, IAirportProvider airportProvider)
+            : base(cache, (alias, cancellationToken) => { return airportProvider.Get(alias, cancellationToken); })
+        {
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,23 +38,65 @@ namespace RouteService
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
             string flightsServiceUrl = Configuration[flightsServiceUrlKey];
             int flightServiceCasheLifetime = int.Parse(Configuration[flightServiceCasheLifetimeKey]);
             TimeSpan flightServiceTtl = TimeSpan.FromMinutes(flightServiceCasheLifetime);
 
-            var flightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
+            var myflightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
 
-            var airlineProvider = new AirlineProvider(flightsservice);
-            var routeProvider = new RouteProvider(flightsservice);
-            var airportProvider = new AirportProvider(flightsservice);
+            //var airlineProvider = new AirlineProvider(flightsservice);
+            //var routeProvider = new RouteProvider(flightsservice);
+            //var airportProvider = new AirportProvider(flightsservice);
 
-            var airlineProviderCached = new AirlineProviderCached(flightServiceTtl, airlineProvider);
-            var airportProviderCached = new AirportProviderCached(flightServiceTtl, airportProvider);
-            var routeProviderCached = new RouteProviderCached(flightServiceTtl, routeProvider);
+            //var airlineProviderCached = new AirlineProviderCached(flightServiceTtl, airlineProvider);
+            //var airportProviderCached = new AirportProviderCached(flightServiceTtl, airportProvider);
+            //var routeProviderCached = new RouteProviderCached(flightServiceTtl, routeProvider);
 
-            services.AddSingleton<IAirlineProvider>(airlineProviderCached);
-            services.AddSingleton<IRouteProvider>(routeProviderCached);
-            services.AddSingleton<IAirportProvider>(airportProviderCached);
+            //services.AddSingleton<IAirlineProvider>(airlineProviderCached);
+            //services.AddSingleton<IRouteProvider>(routeProviderCached);
+            //services.AddSingleton<IAirportProvider>(airportProviderCached);
+
+            // actually does not work because there is no appropriate ctor to resolve the interface 
+            services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>();
+
+
+            //IAirlineProviderFactory airlineProviderFactory = new AirlineProviderFactory(flightServiceTtl);
+            //services.AddSingleton<IAirlineProviderFactory>(airlineProviderFactory);
+
+            services.AddSingleton<IAirlineProviderFactory>(p => { return new AirlineProviderFactory(flightServiceTtl); });
+            services.AddSingleton<IAirportProviderFactory>( p => { return new AirportProviderFactory(flightServiceTtl);});
+            services.AddSingleton<IRouteProviderFactory>(p => { return new RouteProviderFactory(flightServiceTtl); });
+
+            services.AddScoped<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>(p =>
+            {
+                // create a named/configured HttpClient
+                var httpClient = p.GetRequiredService<IHttpClientFactory>()
+                    .CreateClient(nameof(FlightsServiceClient.IFlightsservice));
+                var baseUri = new Uri(flightsServiceUrl);
+                return new FlightsServiceClient.Flightsservice(baseUri, httpClient);
+            });
+
+            services.AddScoped<IAirlineProvider>(p =>
+            {
+                var factory = p.GetRequiredService<IAirlineProviderFactory>();
+                var flightService = myflightsservice;// p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                return factory.Get(flightService);
+            });
+
+            services.AddScoped<IAirportProvider>(p =>
+            {
+                var factory = p.GetRequiredService<IAirportProviderFactory>();
+                var flightService = myflightsservice; //p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                return factory.Get(flightService);
+            });
+
+            services.AddScoped<IRouteProvider>(p =>
+            {
+                var factory = p.GetRequiredService<IRouteProviderFactory>();
+                var flightService = myflightsservice; //p.GetRequiredService<FlightsServiceClient.IFlightsservice>();
+                return factory.Get(flightService);
+            });
 
             services
                .AddMvc(options =>

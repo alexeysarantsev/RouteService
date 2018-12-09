@@ -14,11 +14,19 @@ namespace RouteService.Controllers
         private readonly IAirlineProvider _airlineProvider;
         private readonly IAirportProvider _airportProvider;
         private readonly IRouteProvider _routeProvider;
-        public RouteController(IAirlineProvider airlineProvider, IAirportProvider airportProvider, IRouteProvider routeProvider)
+
+        private readonly FlightsServiceProvider.IAirlineProviderFactory _airlineProviderFactory;
+        private readonly FlightsServiceClient.IFlightsservice _flightsservice;
+
+        public RouteController(IAirlineProvider airlineProvider, IAirportProvider airportProvider, IRouteProvider routeProvider
+            /*, FlightsServiceProvider.IAirlineProviderFactory airlineProviderFactory, FlightsServiceClient.IFlightsservice flightsservice*/)
         {
             _airlineProvider = airlineProvider;
             _airportProvider = airportProvider;
             _routeProvider = routeProvider;
+
+            //_airlineProviderFactory = airlineProviderFactory;
+            //_flightsservice = flightsservice;
         }
 
         /// <summary>
@@ -38,6 +46,8 @@ namespace RouteService.Controllers
         /// <response code="500">Unhandled server error.</response>
         public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
+//            var aaa = _airlineProviderFactory.Get(_flightsservice);
+
             try
             {
                 JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirport, destinationAirport, cancellationToken);
