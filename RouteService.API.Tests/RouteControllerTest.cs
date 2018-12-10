@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using RouteService.Controllers;
+using RouteService.Api.Controllers;
 using RouteService.FlightsServiceClient.Models;
 using RouteService.Model;
 using RouteService.Model.Interfaces;

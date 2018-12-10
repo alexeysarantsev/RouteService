@@ -14,7 +14,7 @@ using RouteService.FlightsServiceProvider;
 using RouteService.Model.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace RouteService
+namespace RouteService.Api
 {
     public class Startup
     {
@@ -37,20 +37,19 @@ namespace RouteService
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
             string flightsServiceUrl = Configuration[flightsServiceUrlKey];
             int flightServiceCasheLifetime = int.Parse(Configuration[flightServiceCasheLifetimeKey]);
-            TimeSpan flightServiceTtl = TimeSpan.FromMinutes(flightServiceCasheLifetime);
+            TimeSpan flightServiceTimespan = TimeSpan.FromMinutes(flightServiceCasheLifetime);
 
             var myflightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
 
             services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>()
-                        .SetHandlerLifetime(TimeSpan.FromMinutes(2))  //Set lifetime to five minutes
+                        .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                         .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddSingleton<IAirlineProviderFactory>(p => { return new AirlineProviderFactory(flightServiceTtl); });
-            services.AddSingleton<IAirportProviderFactory>( p => { return new AirportProviderFactory(flightServiceTtl);});
-            services.AddSingleton<IRouteProviderFactory>(p => { return new RouteProviderFactory(flightServiceTtl); });
+            services.AddSingleton<IAirlineProviderFactory>(p => { return new AirlineProviderFactory(flightServiceTimespan); });
+            services.AddSingleton<IAirportProviderFactory>( p => { return new AirportProviderFactory(flightServiceTimespan);});
+            services.AddSingleton<IRouteProviderFactory>(p => { return new RouteProviderFactory(flightServiceTimespan); });
 
             services.AddScoped<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>(p =>
             {

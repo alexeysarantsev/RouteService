@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RouteService.Controllers
+namespace RouteService.Api.Controllers
 {
     [Route("api/[controller]"), Produces("application/json"), ApiController]
     public class RouteController : ControllerBase
@@ -40,18 +40,26 @@ namespace RouteService.Controllers
         /// <response code="500">Unhandled server error.</response>
         public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (string.IsNullOrEmpty(sourceAirport))
+                return BadRequest("sourceAirport is empty");
+
+            if (string.IsNullOrEmpty(destinationAirport))
+                return BadRequest("destinationAirport is empty");
+
+            Journey journey = null;
             try
             {
-                JourneyBuilder rb = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirport, destinationAirport, cancellationToken);
-                var routes = await rb.Build();
-                if (routes == null)
-                    return NotFound();
-                return Ok(routes);
+                JourneyBuilder journeyBuilder = new JourneyBuilder(_airlineProvider, _airportProvider, _routeProvider, sourceAirport, destinationAirport, cancellationToken);
+                journey = await journeyBuilder.Build();
             }
             catch (AirportNotFoundException exc)
             {
                 return BadRequest(exc.Message);
             }
+            if (journey == null)
+                return NotFound();
+            return Ok(journey);
+
         }
     }
 }
