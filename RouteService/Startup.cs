@@ -21,7 +21,6 @@ namespace RouteService.Api
         private const string flightsServiceUrlKey = "FlightsServiceUrl";
         private const string flightServiceCasheLifetimeKey = "FlightServiceCasheLifetime";
         
-
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -40,8 +39,6 @@ namespace RouteService.Api
             string flightsServiceUrl = Configuration[flightsServiceUrlKey];
             int flightServiceCasheLifetime = int.Parse(Configuration[flightServiceCasheLifetimeKey]);
             TimeSpan flightServiceTimespan = TimeSpan.FromMinutes(flightServiceCasheLifetime);
-
-            var myflightsservice = new FlightsServiceClient.Flightsservice(new Uri(flightsServiceUrl));
 
             services.AddHttpClient<FlightsServiceClient.IFlightsservice, FlightsServiceClient.Flightsservice>()
                         .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
