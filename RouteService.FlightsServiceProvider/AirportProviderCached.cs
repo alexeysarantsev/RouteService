@@ -6,7 +6,7 @@ namespace RouteService.FlightsServiceProvider
 {
     public class AirportProviderCached : GetByCodeCached<Airport>, IAirportProvider
     {
-        public AirportProviderCached(Cache.MemoryCache<string, Airport> cache, IAirportProvider airportProvider)
+        public AirportProviderCached(Cache.SimpleMemoryCache<string, Airport> cache, IAirportProvider airportProvider)
             : base(cache, (alias, cancellationToken) => { return airportProvider.Get(alias, cancellationToken); })
         {
         }
