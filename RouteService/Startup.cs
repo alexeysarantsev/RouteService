@@ -94,9 +94,9 @@ namespace RouteService.Api
             {
                 options.SwaggerDoc("v1", new Info
                 {
-                    Version = "v1",
+//                    Version = "v1",
                     Title = "Route API",
-                    TermsOfService = "None",
+  //                  TermsOfService = "None",
                     Contact = new Contact
                     {
                         Name = "Alexey Sarantsev",
