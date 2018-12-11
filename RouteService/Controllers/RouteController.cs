@@ -29,15 +29,15 @@ namespace RouteService.Api.Controllers
         /// <param name="destinationAirport">The name or the code of the destination airport.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The route.</returns>
+        /// <response code="200">The route is found.</response>
+        /// <response code="400">The source of destination airport is not set or not found.</response>
+        /// <response code="404">The route is not found.</response>
+        /// <response code="500">Unhandled server error.</response>
         [HttpGet]
         [ProducesResponseType(typeof(Journey), 200)]
         [ProducesResponseType(typeof(void), 400)]
         [ProducesResponseType(typeof(void), 404)]
         [ProducesResponseType(typeof(void), 500)]
-        /// <response code="200">The route is found.</response>
-        /// <response code="400">The source of destination airport is not set or not found.</response>
-        /// <response code="404">The route is not found.</response>
-        /// <response code="500">Unhandled server error.</response>
         public async Task<IActionResult> Get([FromQuery] string sourceAirport, [FromQuery] string destinationAirport, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (string.IsNullOrEmpty(sourceAirport))
