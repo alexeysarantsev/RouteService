@@ -1,0 +1,22 @@
+
+The Objective
+
+The goal of the task is to develop a web service (ASP.NET Web API 5.2.x/ASP.NET Core 2.1+ based application) that provides API for searching a route from one airport to another. Please use the following service to get information about airports and available routes
+
+The above service provides API your service should depend on. Swagger allows you to discover the available API.
+
+The application you create should accept:
+
+·         source airport code
+
+·         destination airport code
+
+and return a route between the provided airports. Please note, a route may consists of several hops.
+
+The application should utilize minimum computation resources, apply appropriate errors handling logic and retry policies, effectively query the service to parallelize the route search and implement graceful shutdown (allows to stop the route search process). Furthermore, because of the instant load on the service(the application is proxied by nginx), it may just refuse connections, so you may need  to implement a sort of throttling logic to avoid overloading with significant number of http requests. Also, make sure your code is testable and the core of the search algorithm is covered by a reasonable number of unit tests.
+
+Please note, routes you obtain are performed by airlines and they are not always functional, e.g. not active. You need to exclude such routes from the result.
+
+ 
+
+The source code should be published to GitHub.
